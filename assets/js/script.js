@@ -18,18 +18,15 @@ document.addEventListener('DOMContentLoaded', function() {
 let produkTerpilih = null;
 
 function pilihProduk(id, nama, harga, stok) {
-    if (stok <= 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Maaf...',
-            text: 'Stok ' + nama + ' sedang kosong!',
-            confirmButtonColor: '#2c3e50'
-        });
+    if(stok <= 0) {
+        Swal.fire('Maaf', 'Stok produk ini sedang kosong', 'error');
         return;
     }
 
+    // Set variabel produk terpilih
     produkTerpilih = { id, nama, harga };
     
+    // 1. Update Layar Monitor
     const display = document.getElementById('display-text');
     if (display) {
         display.innerHTML = `
@@ -40,8 +37,14 @@ function pilihProduk(id, nama, harga, stok) {
         `;
     }
     
+    // 2. MUNCULKAN SIDEBAR (Gunakan ID 'payment-area')
     const payArea = document.getElementById('payment-area');
-    if (payArea) payArea.style.display = 'block';
+    if (payArea) {
+        console.log("Memunculkan payment-area..."); // Cek di console (F12)
+        payArea.style.setProperty('display', 'block', 'important');
+    } else {
+        console.error("Elemen 'payment-area' tidak ditemukan!");
+    }
 }
 
 function prosesBeli() {
@@ -80,7 +83,7 @@ function prosesBeli() {
         }, 2000);
     })
     .catch(error => {
-        modal.hide();
+        if(typeof modal !== 'undefined') modal.hide();
         console.error('Error:', error);
         Swal.fire('Error', 'Gagal menghubungi server', 'error');
     });
@@ -93,11 +96,9 @@ function resetSistem() {
 // ==========================================
 // 3. LOGIKA ADMIN (EDIT MODAL)
 // ==========================================
-// PENTING: Fungsi ini HARUS berada di luar event listener agar bisa dipanggil onclick
 function isiModalEdit(data) {
     console.log("Data diterima untuk Edit:", data); 
     
-    // Pastikan ID elemen ada sebelum diisi nilainya
     const elId = document.getElementById('edit_id');
     const elSlot = document.getElementById('edit_slot');
     const elName = document.getElementById('edit_name');

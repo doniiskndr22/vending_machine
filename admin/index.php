@@ -1,8 +1,8 @@
 <?php
+ob_start(); // Memastikan tidak ada output sebelum header
 session_start();
 include '../config/database.php';
 
-// Cek jika sudah login, langsung lempar ke dashboard
 if (isset($_SESSION['admin_logged_in'])) {
     header("Location: dashboard.php");
     exit;
@@ -11,11 +11,10 @@ if (isset($_SESSION['admin_logged_in'])) {
 $error = "";
 
 if (isset($_POST['login'])) {
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = $_POST['password'];
+    // Trim untuk menghapus spasi yang tidak sengaja terketik
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
-    // Hardcoded simple login untuk keperluan project
-    // User: admin, Pass: admin123
     if ($username === "admin" && $password === "admin123") {
         $_SESSION['admin_logged_in'] = true;
         header("Location: dashboard.php");
@@ -45,7 +44,7 @@ if (isset($_POST['login'])) {
             <div class="alert alert-danger py-2 small text-center"><?= $error ?></div>
         <?php endif; ?>
 
-        <form method="POST" id="loginForm">
+        <form method="POST" id="index.php">
             <div class="mb-3">
                 <label class="form-label small fw-bold">Username</label>
                 <input type="text" name="username" class="form-control" placeholder="admin" required>
