@@ -2,19 +2,25 @@
 include '../../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $slot  = $_POST['slot_code'];
-    $name  = $_POST['name'];
+    // Ambil data dari form
+    $slot  = mysqli_real_escape_string($conn, $_POST['slot_code']);
+    $name  = mysqli_real_escape_string($conn, $_POST['name']);
     $price = $_POST['price'];
     $stock = $_POST['stock'];
-    $image = $_POST['image'] ?: 'default.png';
+    
+    // Ambil nama file hasil ketikan manual
+    $image = mysqli_real_escape_string($conn, $_POST['image']);
 
+    // Query untuk memasukkan data ke database
     $query = "INSERT INTO products (slot_code, name, price, stock, image) 
               VALUES ('$slot', '$name', '$price', '$stock', '$image')";
 
     if (mysqli_query($conn, $query)) {
-        header("Location: ../dashboard.php");
+        // Kembali ke dashboard jika sukses
+        header("Location: ../dashboard.php?status=success");
+        exit();
     } else {
-        echo "Gagal menambah data: " . mysqli_error($conn);
+        echo "Gagal menambahkan data: " . mysqli_error($conn);
     }
 }
 ?>

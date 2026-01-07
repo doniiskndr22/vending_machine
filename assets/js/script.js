@@ -1,4 +1,6 @@
+// ==========================================
 // 1. LOGIKA FEEDBACK LOGIN
+// ==========================================
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.querySelector('#loginForm');
     if (loginForm) {
@@ -10,7 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// 2. LOGIKA VENDING MACHINE (CUSTOMER)
+// ==========================================
+// 2. LOGIKA VENDING MACHINE (CUSTOMER SIDE)
+// ==========================================
 let produkTerpilih = null;
 
 function pilihProduk(id, nama, harga, stok) {
@@ -27,20 +31,25 @@ function pilihProduk(id, nama, harga, stok) {
     produkTerpilih = { id, nama, harga };
     
     const display = document.getElementById('display-text');
-    display.innerHTML = `
-        <div class="text-info fw-bold mb-1">PRODUK TERPILIH:</div>
-        <div class="fs-5 text-white">${nama}</div>
-        <div class="text-warning mt-1">Rp ${harga.toLocaleString('id-ID')}</div>
-        <div class="small mt-2 animate-flicker">> Menunggu Pembayaran...</div>
-    `;
+    if (display) {
+        display.innerHTML = `
+            <div class="text-info fw-bold mb-1">PRODUK TERPILIH:</div>
+            <div class="fs-5 text-white">${nama}</div>
+            <div class="text-warning mt-1">Rp ${harga.toLocaleString('id-ID')}</div>
+            <div class="small mt-2 animate-flicker">> Menunggu Pembayaran...</div>
+        `;
+    }
     
-    document.getElementById('payment-area').style.display = 'block';
+    const payArea = document.getElementById('payment-area');
+    if (payArea) payArea.style.display = 'block';
 }
 
 function prosesBeli() {
     if (!produkTerpilih) return;
 
     const modalElement = document.getElementById('modalProses');
+    if (!modalElement) return;
+
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
 
@@ -59,7 +68,7 @@ function prosesBeli() {
                 Swal.fire({
                     icon: 'success',
                     title: 'Pembayaran Sukses!',
-                    text: 'Silakan ambil ' + produkTerpilih.name + ' di laci bawah.',
+                    text: 'Silakan ambil ' + produkTerpilih.nama + ' di laci bawah.',
                     timer: 3000,
                     showConfirmButton: false
                 }).then(() => {
@@ -72,6 +81,7 @@ function prosesBeli() {
     })
     .catch(error => {
         modal.hide();
+        console.error('Error:', error);
         Swal.fire('Error', 'Gagal menghubungi server', 'error');
     });
 }
@@ -80,15 +90,23 @@ function resetSistem() {
     location.reload();
 }
 
+// ==========================================
 // 3. LOGIKA ADMIN (EDIT MODAL)
-// Fungsi ini harus berada di luar agar bisa dipanggil oleh onclick HTML
+// ==========================================
+// PENTING: Fungsi ini HARUS berada di luar event listener agar bisa dipanggil onclick
 function isiModalEdit(data) {
-    // Pastikan ID elemen ini (edit_id, dsb) SAMA dengan atribut ID di dashboard.php
-    if(document.getElementById('edit_id')) {
-        document.getElementById('edit_id').value = data.id;
-        document.getElementById('edit_slot').value = data.slot_code;
-        document.getElementById('edit_name').value = data.name;
-        document.getElementById('edit_price').value = data.price;
-        document.getElementById('edit_stock').value = data.stock;
-    }
+    console.log("Data diterima untuk Edit:", data); 
+    
+    // Pastikan ID elemen ada sebelum diisi nilainya
+    const elId = document.getElementById('edit_id');
+    const elSlot = document.getElementById('edit_slot');
+    const elName = document.getElementById('edit_name');
+    const elPrice = document.getElementById('edit_price');
+    const elStock = document.getElementById('edit_stock');
+
+    if (elId) elId.value = data.id;
+    if (elSlot) elSlot.value = data.slot_code;
+    if (elName) elName.value = data.name;
+    if (elPrice) elPrice.value = data.price;
+    if (elStock) elStock.value = data.stock;
 }
