@@ -1,6 +1,5 @@
 <?php 
 session_start();
-// Proteksi halaman admin
 if (!isset($_SESSION['admin_logged_in'])) {
     header("Location: index.php");
     exit;
@@ -36,6 +35,13 @@ $total_item = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total F
 </nav>
 
 <div class="container">
+    <?php if(isset($_GET['status'])): ?>
+        <div class="alert alert-info alert-dismissible fade show">
+            <?= htmlspecialchars($_GET['status']) === 'success' ? 'Operasi Berhasil!' : (htmlspecialchars($_GET['status']) === 'deleted' ? 'Produk Dihapus!' : 'Terjadi Perubahan!') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="card p-3 shadow-sm border-0 border-start border-primary border-4">
@@ -87,7 +93,7 @@ $total_item = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total F
                             <?php endif; ?>
                         </td>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" 
+                            <button type="button" class="btn btn-sm btn-outline-primary me-1" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#modalEdit" 
                                     onclick="isiModalEdit(<?= htmlspecialchars(json_encode($row)) ?>)">
@@ -95,7 +101,7 @@ $total_item = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total F
                             </button>
                             <a href="actions/hapus_produk.php?id=<?= $row['id'] ?>" 
                                class="btn btn-sm btn-outline-danger" 
-                               onclick="return confirm('Hapus produk ini?')">
+                               onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
                                 <i class="bi bi-trash"></i>
                             </a>
                         </td>
@@ -132,8 +138,8 @@ $total_item = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total F
                     <input type="number" name="stock" class="form-control" placeholder="10" required>
                 </div>
                 <div class="mb-2">
-                    <label class="small fw-bold">Nama File Gambar (Simpan di assets/img/)</label>
-                    <input type="text" name="image" class="form-control" placeholder="cola.png">
+                    <label class="small fw-bold">Nama File Gambar (Ketik nama file di assets/img/)</label>
+                    <input type="text" name="image" class="form-control" placeholder="cola.jpg" required>
                 </div>
             </div>
             <div class="modal-footer">
@@ -171,7 +177,6 @@ $total_item = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total F
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
             </div>
         </form>
@@ -180,6 +185,5 @@ $total_item = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total F
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/script.js"></script>
-
 </body>
 </html>
